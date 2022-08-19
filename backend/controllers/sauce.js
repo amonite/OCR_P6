@@ -11,8 +11,10 @@ exports.createSauce = (req, res, next) =>{
         ...sauceObject,
         userId: req.auth.userId,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // pquoi on doit avoir l'url complète pour utiliser l'image ?
-        likes: 0,
-        dislikes: 0
+        // likes: 0,
+        // dislikes: 0,
+        // usersLiked: [],
+        // usersDisliked: []
     });
     sauce.save().then(
         () => { res.status(201).json({message: "sauce created !"}); }
@@ -74,16 +76,78 @@ exports.updateSauce = (req, res, next) =>{
 exports.likeSauce = (req, res, next) =>{
     Sauce.findOne({_id: req.params.id})  // recup l'id de la sauce dans l'url 
         .then((sauce) =>{
-                //log la requête pour voir son body { userId: "xxxxxxxxxxxxx", like: 1}
+                /* log la requête pour voir son body { userId: "xxxxxxxxxxxxx", like: 1} */
                 console.log(req.body);
-                // récupère le like dans la requête
+                /* récupère le like dans la requête */
                 const like = Number(req.body.like); 
                 console.log( "like = "+ like);
+                /* récupère l'id de l'utilisateur */
+                const userId = req.body.userId;
+                console.log("userId = "+ userId);
 
+                if(like == 1){
+                    console.log("condition passed like = "+like)
+                    console.log(sauce.usersLiked.length)
+                    if(sauce.usersLiked.length !==0){
+                        for(i=0;i<sauce.usersLiked.length;i++){
+                            console.log(sauce.usersLiked[i]);
+                            
+                                if(userId !== sauce.usersLiked[i]){
+                                    console.log("userId !== usersLiked[i]");
+                                    Sauce.updateOne(
+                                        {$inc:{likes: 1}, $push: {usersLiked:userId}}).then(
+                                    () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                                ).catch(error =>{ res.status(400).json({error: error});})
+                                }
+                                // if(userId == sauce.usersLiked[i]) {
+                                //     Sauce.updateOne(
+                                //         {likes: like}).then(
+                                //     () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                                // ).catch(error =>{ res.status(400).json({error: error});})
+                                // }
+                            
+                          
+                        }
+                        //     Sauce.updateOne(
+                        //         {$inc: {likes: like}, $push: {usersLiked:userId}}).then(
+                        //     () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                        //  ).catch(error =>{ res.status(400).json({error: error});})
+                    }
+                    else{
+                        Sauce.updateOne(
+                            {likes: like, $push: {usersLiked:userId}}).then(
+                                () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                                ).catch(error =>{ res.status(400).json({error: error});})
+                    }
+                
+                }
+                else{
+                    if(sauce.usersLiked.length !==0){
+                        for(i=0; i<sauce.usersLiked.length;i++){
+                            if(userId == sauce.usersLiked[i]){
+                                Sauce.updateOne(
+                                    {$inc:{likes: -1}, $pull: {usersLiked:userId}}).then(
+                                        () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                                    ).catch(error =>{ res.status(400).json({error: error});})
+                            }
+                        }
+                    }
+                }
+                    
+                    
+                    
+                
+                
+                // Sauce.updateOne(
+                //         {$inc: {likes: like}, $push: {usersLiked:userId}}).then(
+                //     () =>{ res.status(200).json({message: "sauce liked or disliked  !"})}
+                //  ).catch(error =>{ res.status(400).json({error: error});})
+                
                 console.log(sauce);
-                Sauce.updateOne({likes: like}).then(
-                    () =>{ res.status(200).json({message: "sauce liked or disliked 6 !"});}
-                ).catch(error =>{ res.status(400).json({error: error});})
+
+                // Sauce.updateOne({likes: like}).then(
+                //     () =>{ res.status(200).json({message: "sauce liked or disliked 6 !"});}
+                // ).catch(error =>{ res.status(400).json({error: error});})
             
     
     })

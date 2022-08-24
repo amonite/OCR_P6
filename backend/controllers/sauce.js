@@ -77,31 +77,30 @@ exports.likeSauce = (req, res, next) =>{
     Sauce.findOne({_id: req.params.id})  // recup l'id de la sauce dans l'url 
         
         .then((sauce) =>{
-                console.log("id de la sauce = "+req.params.id);
+                // console.log("id de la sauce = "+req.params.id);
                 /* log la requête pour voir son body { userId: "xxxxxxxxxxxxx", like: 1} */
-                console.log(req.body);
+                // console.log(req.body);
                 /* récupère le like dans la requête */
                 const like = Number(req.body.like); 
-                console.log( "like = "+ like);
+                // console.log( "like = "+ like);
                 /* récupère l'id de l'utilisateur */
                 const userId = req.body.userId;
-                console.log("userId = "+ userId);
-
-                if(like == 1){
-                   
-                        Sauce.updateOne({_id:req.params.id},
-                            {$inc:{likes: 1}, $push: {usersLiked:userId}}).then(
-                                () =>{ res.status(200).json({message: "sauce liked  !"})}
-                                ).catch(error =>{ res.status(400).json({error: error});})
-                    // }
-                
+                // console.log("userId = "+ userId);
+                if(like === 1){
+                    console.log("like 1 = "+like);
+                    Sauce.updateOne({_id:req.params.id},
+                        {$inc:{likes: 1}, $push: {usersLiked:userId}}).then(
+                            () =>{ res.status(200).json({message: "sauce liked  !"})}
+                            ).catch(error =>{ res.status(400).json({error: error});})
                 }
-                else{
-                    console.log("passed else like ="+like);
+
+                if(like === 0){
+                    console.log("like 0 = "+like);
+                    
                     if(sauce.usersLiked.length !==0){
                         for(i=0; i<sauce.usersLiked.length;i++){
                             if(userId == sauce.usersLiked[i]){
-                                console.log("we got matching ids !!!"+userId+"..."+sauce.usersLiked[i]);
+                                // console.log("we got matching ids !!!"+userId+"..."+sauce.usersLiked[i]);
                                 Sauce.updateOne({_id:req.params.id},
                                     {$inc:{likes: -1}, $pull: {usersLiked:userId}}).then(
                                         () =>{ res.status(200).json({message: "sauce unliked !"})}
@@ -109,10 +108,31 @@ exports.likeSauce = (req, res, next) =>{
                             }
                         }
                     }
+                    if(sauce.usersDisliked.length !==0){
+                        console.log("112");
+
+                        for(i=0; i<sauce.usersDisliked.length; i++){
+                            if(userId == sauce.usersDisliked[i]){
+                                Sauce.updateOne({_id:req.params.id},
+                                    {$inc:{dislikes: -1}, $pull: {usersDisliked:userId}}).then(
+                                        () =>{ res.status(200).json({message:"sauce undisliked !"})}
+                                    ).catch(error =>{res.status(400).json({error:error});})
+                            }
+                        }
+                    }
+                }
+                if(like === -1){
+                    console.log("like -1 = "+like);
+                    Sauce.updateOne({_id:req.params.id},
+                        {$inc:{dislikes:1}, $push: {usersDisliked:userId}}).then(
+                            () =>{res.status(200).json({message:"sauce disliked !"})}
+                        ).catch(error =>{ res.status(400).json({error:error});})
+
                 }
                 
-                console.log(sauce);       
+                // console.log(sauce);       
     
-    })
-    .catch(error => res.status(400).json({error}));
+        })
+        .catch(error => res.status(400).json({error}));
 }
+

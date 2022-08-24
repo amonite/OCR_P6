@@ -12,7 +12,7 @@ const sauceSchema = mongoose.Schema({
     heat: { type: Number, required: true },         // nombre <> 1 et 10 décrivant la sauce 
     likes: { type: Number, default: 0 },//, required: true },        // nombre d'utilisateurs qui aiment la sauce ...............................try default:0 !
     dislikes: { type: Number, default: 0 },//, require: true },      // nombre d'utilisateurs qui n'aiment pas la sauce..........................try default:0
-    usersLiked: { type: [String] },//, require: true },     // tableau des identifiants des utilisateurs qui ont aimé la sauce
+    usersLiked: { type: [String] },//, require: true },     // tableau des identifiants des utilisateurs qui ont aimé la sauce...................try req:true, default:[]
     usersDisliked: { type: [String] }//, require: true }   // tableau des identifiants des utilisateurs qui n'ont pas aimé la sauce
 });
 

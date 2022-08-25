@@ -4,7 +4,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 exports.signup = (req, res, next) =>{
-    // password validation goes here ...
+    // password validation goes here ...but the front won't let me send messages !
+    // https://www.npmjs.com/package/password-validator
     /* hash du mdp */
     bcrypt.hash(req.body.password, 10)
         .then(hash =>{

@@ -4,6 +4,8 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 exports.signup = (req, res, next) =>{
+    // password validation goes here ...
+    /* hash du mdp */
     bcrypt.hash(req.body.password, 10)
         .then(hash =>{
             const user = new User({
@@ -32,7 +34,7 @@ exports.login = (req, res, next) =>{
                         userId: user._id,
                         token: jwt.sign(            // la methode .sign() de jwt chiffre un token
                             { userId: user._id },
-                            "RANDOM_TOKEN_SECRET",
+                            "RANDOM_TOKEN_SECRET",  // chaîne secrete pour générer le token; à remplacer par une + longue pour la prod !
                             { expiresIn: "24h"}
                         )
                     });
@@ -41,3 +43,5 @@ exports.login = (req, res, next) =>{
         })
         .catch(error => res.status(500).json({error}));
 };
+
+/* Le token contient en payload (données encodées ds le token) l'id de l'utilisateur */

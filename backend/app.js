@@ -1,14 +1,20 @@
 /* app.js */
 
 const express = require("express");             // inclus le module express de node
+const helmet = require("helmet");               // inclus le module helmet de node 
 const mongoose = require("mongoose");           // inclus le module mongoose de node pour utiliser mongoDB Atlas
 const path = require("path");                   // pour accéder au fichiers sur notre server
 const sauceRoutes = require("./routes/sauce");  // importe les routes pour les sauces
 const userRoutes = require("./routes/user");    // importe les routes pour l'utilisateur
 
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+console.log("key = "+ process.env.USER_KEY);
+
 /* connection au cluster mongodb atlas */
-mongoose.connect("mongodb+srv://amonite:mongoDB7619@cluster0.7i2ttrf.mongodb.net/?retryWrites=true&w=majority",
+mongoose.connect(process.env.USER_KEY,     // normalement on laise pas en clair la clé et le mp ici....
 { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -16,6 +22,13 @@ mongoose.connect("mongodb+srv://amonite:mongoDB7619@cluster0.7i2ttrf.mongodb.net
 
 /* passe un handle à notre module pour pouvoir l'utiliser */
 const app = express();
+
+/* use helmet */
+// app.use(helmet());
+app.use(helmet.noSniff());    // mitigates MIME type sniffing X-Content-Type-Options: nosniff
+app.use(helmet.xssFilter());  // disable browsers' buggy cross-site scripting filter X-XSS-PROTECTION:0 (Header set to 0) 
+
+
 
 /* Gère les problèmes de Cross Origin <> le server du front :4200 et celui du back :3000 */
 app.use((req, res, next) => {

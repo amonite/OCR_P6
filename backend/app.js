@@ -6,12 +6,11 @@ const mongoose = require("mongoose");           // inclus le module mongoose de 
 const path = require("path");                   // pour accéder au fichiers sur notre server
 const sauceRoutes = require("./routes/sauce");  // importe les routes pour les sauces
 const userRoutes = require("./routes/user");    // importe les routes pour l'utilisateur
+const dotenv = require('dotenv');               // pour gérer des variables d'environnement
 
-
-const dotenv = require('dotenv');
 dotenv.config();
 
-console.log("key = "+ process.env.USER_KEY);
+// console.log("key = "+ process.env.USER_KEY);
 
 /* connection au cluster mongodb atlas */
 mongoose.connect(process.env.USER_KEY,     // normalement on laise pas en clair la clé et le mp ici....

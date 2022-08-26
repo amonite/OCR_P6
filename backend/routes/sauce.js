@@ -17,7 +17,7 @@ router.put("/:id", auth, multer, sauceCtrl.updateSauce);    // "/api/sauces/:id"
 router.delete("/:id", auth, sauceCtrl.killSauce);           // "/api/sauces/:id"        delete one particular sauce ...             DELETE
 
 router.post("/:id/like", auth, sauceCtrl.likeSauce);        // "/api/sauces/:id/like"   like one particular sauce                   UPDATE
-// router.post("/:id/dislike", auth, sauceCtrl.dislikeSauce);  // "/api/sauces/:id/like"   dislike one particuler sauce                UPDATE
+
 
 
 module.exports = router;
